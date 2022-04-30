@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -37,7 +38,8 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
         // with the ID magnitude
         TextView magnitudeView = listItemView.findViewById(R.id.magnitude);
         // Get the magnitude and set the text on the TextView
-        magnitudeView.setText(String.format("%.1f", currentEarthquake.getMagnitude()));
+        String formattedMagnitude = formatMagnitude(currentEarthquake.getMagnitude());
+        magnitudeView.setText(formattedMagnitude);
 
         String originalLocation = currentEarthquake.getLocation();
 
@@ -61,7 +63,6 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
         locationOffsetView.setText(locationOffset);
         primaryLocationView.setText(primaryLocation);
 
-
         // Create a new Date object from the time in milliseconds of the earthquake.
         Date dateObject = new Date(currentEarthquake.getTimeInMilliseconds());
 
@@ -73,7 +74,7 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
 
         // Find the TextView with view ID time
         TextView timeView = listItemView.findViewById(R.id.time);
-        // Format the time string(i.e. "4:30PM")
+        // Format the time string (i.e. "4:30PM")
         String formattedTime = formatTime(dateObject);
         timeView.setText(formattedTime);
 
@@ -96,5 +97,14 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
     private String formatTime(Date dateObject) {
         SimpleDateFormat timeFormat = new SimpleDateFormat("h:mm a");
         return timeFormat.format(dateObject);
+    }
+
+    /**
+     * Return the formatted magnitude string showing 1 decimal place (i.e. "3.2")
+     * from a decimal magnitude value.
+     */
+    private String formatMagnitude(double magnitude) {
+        DecimalFormat magnitudeFormat = new DecimalFormat("0.0");
+        return magnitudeFormat.format(magnitude);
     }
 }
