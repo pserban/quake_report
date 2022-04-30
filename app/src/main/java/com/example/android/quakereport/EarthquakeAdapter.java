@@ -16,6 +16,8 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
 
     private static final String LOG_TAG = EarthquakeAdapter.class.getSimpleName();
 
+    private static final String LOCATION_SEPARATOR = " of ";
+    
     public EarthquakeAdapter(Activity context, List<Earthquake> earthquakes) {
         super(context, 0, earthquakes);
     }
@@ -37,10 +39,28 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
         // Get the magnitude and set the text on the TextView
         magnitudeView.setText(String.format("%.1f", currentEarthquake.getMagnitude()));
 
-        // Find location
-        TextView cityView = listItemView.findViewById(R.id.location);
+        String originalLocation = currentEarthquake.getLocation();
+
+        String locationOffset = null;
+        String primaryLocation = null;
+
+        if (originalLocation.contains(LOCATION_SEPARATOR)) {
+            String[] parts = originalLocation.split(LOCATION_SEPARATOR);
+            locationOffset = parts[0] + LOCATION_SEPARATOR;
+            primaryLocation = parts[1];
+        }
+        else {
+            locationOffset = getContext().getString(R.string.near_the);
+            primaryLocation = originalLocation;
+        }
+
+        // Find location views
+        TextView locationOffsetView = listItemView.findViewById(R.id.location_offset);
+        TextView primaryLocationView = listItemView.findViewById(R.id.primary_location);
         // Get the city and set the text on the TextView
-        cityView.setText(currentEarthquake.getLocation());
+        locationOffsetView.setText(locationOffset);
+        primaryLocationView.setText(primaryLocation);
+
 
         // Create a new Date object from the time in milliseconds of the earthquake.
         Date dateObject = new Date(currentEarthquake.getTimeInMilliseconds());
