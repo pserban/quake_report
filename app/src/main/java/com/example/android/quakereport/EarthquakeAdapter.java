@@ -9,12 +9,13 @@ import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 
-public class QuakeAdapter extends ArrayAdapter<Earthquake> {
+public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
 
-    private static final String LOG_TAG = QuakeAdapter.class.getSimpleName();
+    private static final String LOG_TAG = EarthquakeAdapter.class.getSimpleName();
 
-    public QuakeAdapter(Activity context, ArrayList<Earthquake> earthquakes) {
+    public EarthquakeAdapter(Activity context, List<Earthquake> earthquakes) {
         super(context, 0, earthquakes);
     }
 
@@ -30,21 +31,21 @@ public class QuakeAdapter extends ArrayAdapter<Earthquake> {
         Earthquake currentEarthquake = getItem(position);
 
         // Find the TextView in earthquake_list_element.xml layout
-        // with the ID magnitude_text_view
-        TextView magnitudeTextView = listItemView.findViewById(R.id.magnitude_text_view);
+        // with the ID magnitude
+        TextView magnitudeView = listItemView.findViewById(R.id.magnitude);
         // Get the magnitude and set the text on the TextView
-        magnitudeTextView.setText(String.format("%.1f", currentEarthquake.getMagnitude()));
+        magnitudeView.setText(String.format("%.1f", currentEarthquake.getMagnitude()));
 
-        // Find city_text_view
-        TextView cityTextView = listItemView.findViewById(R.id.city_text_view);
+        // Find location
+        TextView cityView = listItemView.findViewById(R.id.location);
         // Get the city and set the text on the TextView
-        cityTextView.setText(currentEarthquake.getCity());
+        cityView.setText(currentEarthquake.getLocation());
 
         // Find date_text_view
-        TextView dateTextView = listItemView.findViewById(R.id.date_text_view);
+        TextView dateView = listItemView.findViewById(R.id.date);
         // Get the date and set the text on the TextView
         SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy");
-        dateTextView.setText(sdf.format(currentEarthquake.getTime()));
+        dateView.setText(sdf.format(currentEarthquake.getDate()));
 
         // Return the whole list item layout (containing 3 TextViews)
         // so that it can be shown in the ListView
