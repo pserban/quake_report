@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -21,15 +22,14 @@ public class EarthquakeActivity extends AppCompatActivity {
     private static final String USGS_REQUEST_URL =
             "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&eventtype=earthquake&orderby=time&minmag=6&limit=10";
 
-    ArrayList<Earthquake> earthquakes;
-
     ListView earthquakeListView;
+    ArrayAdapter<Earthquake> mEarthquakeArrayAdapter;
 
     private final AdapterView.OnItemClickListener mOnItemClickListener =
             new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    Earthquake currentEarthquake = earthquakes.get(i);
+                    Earthquake currentEarthquake = mEarthquakeArrayAdapter.getItem(i);
                     openWebPage(currentEarthquake.getUrl());
                 }
             };
@@ -39,24 +39,37 @@ public class EarthquakeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.earthquake_activity);
 
+        setupAdapter();
+
+        EarthquakeAsyncTask task = new EarthquakeAsyncTask(this);
+        task.execute(EarthquakeActivity.USGS_REQUEST_URL);
+    }
+
+    private void setupAdapter() {
         // Find a reference to the {@link ListView} in the layout
         earthquakeListView = findViewById(R.id.list);
 
         // Set click handler for the items in the list
         earthquakeListView.setOnItemClickListener(mOnItemClickListener);
 
-        EarthquakeAsyncTask task = new EarthquakeAsyncTask(this);
-        task.execute(EarthquakeActivity.USGS_REQUEST_URL);
-    }
-
-    public void setupAdapter(ArrayList<Earthquake> earthquakes) {
         // Create a new {@link ArrayAdapter} of earthquakes
-        EarthquakeAdapter adapter = new EarthquakeAdapter(this, earthquakes);
-        this.earthquakes = earthquakes;
+        mEarthquakeArrayAdapter = new EarthquakeAdapter(this, new ArrayList<Earthquake>());
 
         // Set the adapter on the {@link ListView}
         // so the list can be populated in the user interface
-        earthquakeListView.setAdapter(adapter);
+        earthquakeListView.setAdapter(mEarthquakeArrayAdapter);
+    }
+
+    public void loadDataIntoAdapter(ArrayList<Earthquake> earthquakes) {
+        // Clear the adapter of previous earthquake data
+        mEarthquakeArrayAdapter.clear();
+
+        // If there is a valid list of {@link Earthquake}s,
+        // then add them to the adapter's data set.
+        // This will trigger the ListView to update.
+        if (earthquakes != null && !earthquakes.isEmpty()) {
+            mEarthquakeArrayAdapter.addAll(earthquakes);
+        }
     }
 
     private void openWebPage(String url) {

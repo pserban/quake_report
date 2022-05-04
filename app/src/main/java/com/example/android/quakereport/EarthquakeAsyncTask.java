@@ -41,6 +41,6 @@ public class EarthquakeAsyncTask extends AsyncTask<String, Void, ArrayList<Earth
             return;
         }
 
-        activity.setupAdapter(earthquakes);
+        activity.loadDataIntoAdapter(earthquakes);
     }
 }
