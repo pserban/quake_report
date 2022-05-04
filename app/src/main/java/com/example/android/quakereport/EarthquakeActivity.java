@@ -18,7 +18,12 @@ public class EarthquakeActivity extends AppCompatActivity {
 
     public static final String LOG_TAG = EarthquakeActivity.class.getSimpleName();
 
+    private static final String USGS_REQUEST_URL =
+            "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&eventtype=earthquake&orderby=time&minmag=6&limit=10";
+
     ArrayList<Earthquake> earthquakes;
+
+    ListView earthquakeListView;
 
     private final AdapterView.OnItemClickListener mOnItemClickListener =
             new AdapterView.OnItemClickListener() {
@@ -34,20 +39,24 @@ public class EarthquakeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.earthquake_activity);
 
-        // Create a fake list of earthquake locations.
-        earthquakes = QueryUtils.extractEarthquakes();
-
         // Find a reference to the {@link ListView} in the layout
-        ListView earthquakeListView = findViewById(R.id.list);
+        earthquakeListView = findViewById(R.id.list);
 
+        // Set click handler for the items in the list
+        earthquakeListView.setOnItemClickListener(mOnItemClickListener);
+
+        EarthquakeAsyncTask task = new EarthquakeAsyncTask(this);
+        task.execute(EarthquakeActivity.USGS_REQUEST_URL);
+    }
+
+    public void setupAdapter(ArrayList<Earthquake> earthquakes) {
         // Create a new {@link ArrayAdapter} of earthquakes
         EarthquakeAdapter adapter = new EarthquakeAdapter(this, earthquakes);
+        this.earthquakes = earthquakes;
 
         // Set the adapter on the {@link ListView}
         // so the list can be populated in the user interface
         earthquakeListView.setAdapter(adapter);
-        // Set click handler for the items in the list
-        earthquakeListView.setOnItemClickListener(mOnItemClickListener);
     }
 
     private void openWebPage(String url) {
