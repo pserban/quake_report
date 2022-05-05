@@ -15,6 +15,7 @@ public class EarthquakeLoader extends AsyncTaskLoader<ArrayList<Earthquake>> {
     public EarthquakeLoader(Context context, String url) {
         super(context);
         mURL = url;
+        forceLoad();
     }
 
     @Nullable

@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 // import androidx.loader.app.LoaderManager;
 
 import android.app.LoaderManager;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -43,17 +44,20 @@ public class EarthquakeActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.earthquake_activity);
 
-        setupAdapter();
+        setupListView();
 
-        getLoaderManager().initLoader(1, null, this).forceLoad();
+        getLoaderManager().initLoader(1, null, this);
     }
 
-    private void setupAdapter() {
+    private void setupListView() {
         // Find a reference to the {@link ListView} in the layout
         earthquakeListView = findViewById(R.id.list);
 
         // Set click handler for the items in the list
         earthquakeListView.setOnItemClickListener(mOnItemClickListener);
+
+        TextView textView = findViewById(R.id.empty_list_view);
+        earthquakeListView.setEmptyView(textView);
 
         // Create a new {@link ArrayAdapter} of earthquakes
         mEarthquakeArrayAdapter = new EarthquakeAdapter(this, new ArrayList<Earthquake>());
@@ -96,6 +100,9 @@ public class EarthquakeActivity extends AppCompatActivity
         }
 
         loadDataIntoAdapter(data);
+
+        TextView textView = findViewById(R.id.empty_list_view);
+        textView.setText(R.string.no_earthquakes_msg);
     }
 
     @Override
