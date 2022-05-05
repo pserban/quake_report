@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 // import androidx.loader.app.LoaderManager;
 
 import android.app.LoaderManager;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -103,6 +104,9 @@ public class EarthquakeActivity extends AppCompatActivity
 
         TextView textView = findViewById(R.id.empty_list_view);
         textView.setText(R.string.no_earthquakes_msg);
+
+        ProgressBar progressBar = findViewById(R.id.download_progress_indicator);
+        progressBar.setVisibility(View.GONE);
     }
 
     @Override
