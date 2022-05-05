@@ -1,21 +1,25 @@
 package com.example.android.quakereport;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
+import android.content.Loader;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
-import java.text.SimpleDateFormat;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+// import androidx.loader.app.LoaderManager;
+
+import android.app.LoaderManager;
+
 import java.util.ArrayList;
 
-public class EarthquakeActivity extends AppCompatActivity {
+public class EarthquakeActivity extends AppCompatActivity
+        implements LoaderManager.LoaderCallbacks<ArrayList<Earthquake>> {
 
     public static final String LOG_TAG = EarthquakeActivity.class.getSimpleName();
 
@@ -41,8 +45,7 @@ public class EarthquakeActivity extends AppCompatActivity {
 
         setupAdapter();
 
-        EarthquakeAsyncTask task = new EarthquakeAsyncTask(this);
-        task.execute(EarthquakeActivity.USGS_REQUEST_URL);
+        getLoaderManager().initLoader(1, null, this).forceLoad();
     }
 
     private void setupAdapter() {
@@ -80,4 +83,23 @@ public class EarthquakeActivity extends AppCompatActivity {
         }
     }
 
+    @NonNull
+    @Override
+    public Loader<ArrayList<Earthquake>> onCreateLoader(int id, @Nullable Bundle args) {
+        return new EarthquakeLoader(EarthquakeActivity.this, EarthquakeActivity.USGS_REQUEST_URL);
+    }
+
+    @Override
+    public void onLoadFinished(@NonNull Loader<ArrayList<Earthquake>> loader, ArrayList<Earthquake> data) {
+        if (data == null) {
+            return;
+        }
+
+        loadDataIntoAdapter(data);
+    }
+
+    @Override
+    public void onLoaderReset(@NonNull Loader<ArrayList<Earthquake>> loader) {
+        loadDataIntoAdapter(new ArrayList<Earthquake>());
+    }
 }
