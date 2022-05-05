@@ -2,4 +2,5 @@
     <string name="app_name">Quake Report</string>
     <string name="near_the">Near the</string>
     <string name="no_earthquakes_msg">No earthquakes found.</string>
+    <string name="no_network_connection">No network connection.</string>
 </resources>

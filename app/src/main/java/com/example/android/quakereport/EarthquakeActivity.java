@@ -1,7 +1,10 @@
 package com.example.android.quakereport;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -45,9 +48,22 @@ public class EarthquakeActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.earthquake_activity);
 
-        setupListView();
+        // Get a reference to the ConnectivityManager to check the
+        // state of network connectivity
+        ConnectivityManager connMgr = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        getLoaderManager().initLoader(1, null, this);
+        // Get details on the currently active default data network
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+        // If there is a network connection, fetch data
+        if (networkInfo != null && networkInfo.isConnected()) {
+            setupListView();
+            getLoaderManager().initLoader(1, null, this);
+        } else {
+            setTextViewContent(R.string.no_network_connection);
+            hideProgressBar();
+        }
     }
 
     private void setupListView() {
@@ -102,11 +118,19 @@ public class EarthquakeActivity extends AppCompatActivity
 
         loadDataIntoAdapter(data);
 
-        TextView textView = findViewById(R.id.empty_list_view);
-        textView.setText(R.string.no_earthquakes_msg);
+        setTextViewContent(R.string.no_earthquakes_msg);
 
+        hideProgressBar();
+    }
+
+    private void hideProgressBar() {
         ProgressBar progressBar = findViewById(R.id.download_progress_indicator);
         progressBar.setVisibility(View.GONE);
+    }
+
+    private void setTextViewContent(int resourceID) {
+        TextView textView = findViewById(R.id.empty_list_view);
+        textView.setText(resourceID);
     }
 
     @Override
